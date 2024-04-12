@@ -1,3 +1,6 @@
+"""
+sparrowDB 客服端
+"""
 import sys
 import requests
 from colorama import Fore, init
@@ -10,10 +13,19 @@ class SparrowClint(object):
         init(autoreset=True)
 
     def send_command(self, command):
+        """
+        发送命令
+        :param command: 命令
+        :return:
+        """
         r = requests.post(self.url, data={"command": command}, headers=self.headers)
         return r.json()
 
     def main(self):
+        """
+        主方法
+        :return:
+        """
         while True:
             host = input("Enter Host:")
             if host == "":

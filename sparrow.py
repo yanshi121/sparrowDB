@@ -8,6 +8,11 @@ class SparrowDB(object):
         self._data_body_ = {}
 
     def _is_key_value_overdue_(self, key):
+        """
+        检测key_value的值是否过期，过期就删除
+        :param key: 值的key
+        :return:
+        """
         try:
             valid_time = self._data_key_value_.get(key).get("valid_time")
             if valid_time is not None:
@@ -23,6 +28,11 @@ class SparrowDB(object):
             pass
 
     def _is_body_overdue_(self, key):
+        """
+        检测body的值是否过期，过期就删除
+        :param key: 值的key
+        :return:
+        """
         try:
             valid_time = self._data_body_.get(key).get("valid_time")
             if valid_time is not None:
@@ -38,6 +48,13 @@ class SparrowDB(object):
             pass
 
     def set_key_value(self, key, value, valid_time=None):
+        """
+        向key_value加入数据
+        :param key:
+        :param value:
+        :param valid_time:
+        :return:
+        """
         self._is_key_value_overdue_(key)
         if key in self._data_key_value_.keys():
             return f"{key} already in SparrowDB"
@@ -46,6 +63,13 @@ class SparrowDB(object):
             return self._data_key_value_[key]
 
     def reset_key_value(self, key, value, valid_time=None):
+        """
+        重新设置key_value的某个数据的值
+        :param key:
+        :param value:
+        :param valid_time:
+        :return:
+        """
         self._is_key_value_overdue_(key)
         if key in self._data_key_value_.keys():
             self._data_key_value_[key] = {"value": value, "valid_time": valid_time, "set_time": time.time()}
@@ -54,6 +78,11 @@ class SparrowDB(object):
             return f"{key} not found in SparrowDB"
 
     def get_key_value(self, key):
+        """
+        获取key_value中某个数据的值
+        :param key:
+        :return:
+        """
         self._is_key_value_overdue_(key)
         if key in self._data_key_value_.keys():
             return {key: self._data_key_value_[key]['value']}
@@ -61,6 +90,11 @@ class SparrowDB(object):
             return f"{key} not found in SparrowDB"
 
     def delete_key_value(self, key):
+        """
+        删除key_value中某个数据
+        :param key:
+        :return:
+        """
         self._is_key_value_overdue_(key)
         if key in self._data_key_value_.keys():
             data = {"key": key, "value": self._data_key_value_[key]['value']}
@@ -70,6 +104,13 @@ class SparrowDB(object):
             return f"{key} not found  in SparrowDB"
 
     def set_body(self, key, body, valid_time=None):
+        """
+        行body中加入数据
+        :param key:
+        :param body:
+        :param valid_time:
+        :return:
+        """
         self._is_body_overdue_(key)
         if key in self._data_body_.keys():
 
@@ -79,6 +120,13 @@ class SparrowDB(object):
             return self._data_body_[key]
 
     def reset_body(self, key, body, valid_time=None):
+        """
+        重新设置body中的某个数据
+        :param key:
+        :param body:
+        :param valid_time:
+        :return:
+        """
         self._is_body_overdue_(key)
         if key in self._data_body_.keys():
             body_key = body.get("key")
@@ -91,6 +139,11 @@ class SparrowDB(object):
             return f"{key} not found in SparrowDB"
 
     def get_body(self, key):
+        """
+        获取body中的某个值
+        :param key:
+        :return:
+        """
         self._is_body_overdue_(key)
         if key in self._data_body_.keys():
             return {key: self._data_body_[key]['value']}
@@ -98,6 +151,11 @@ class SparrowDB(object):
             return f"{key} not found in SparrowDB"
 
     def delete_body(self, key):
+        """
+        删除body中的某个值
+        :param key:
+        :return:
+        """
         self._is_body_overdue_(key)
         if key in self._data_body_.keys():
             data = {"key": key, "value": self._data_body_[key]['value']}
@@ -107,6 +165,12 @@ class SparrowDB(object):
             return f"{key} not found  in SparrowDB"
 
     def set_key_value_valid_time(self, key, valid_time):
+        """
+        重新设置key_value中某个值的过期时间
+        :param key:
+        :param valid_time:
+        :return:
+        """
         print(key)
         self._is_key_value_overdue_(key)
         if key in self._data_key_value_.keys():
@@ -117,6 +181,12 @@ class SparrowDB(object):
             return f"{key} not found in SparrowDB"
 
     def set_body_valid_time(self, key, valid_time):
+        """
+        重新设置body中某个值的过期时间
+        :param key:
+        :param valid_time:
+        :return:
+        """
         self._is_body_overdue_(key)
         if key in self._data_body_.keys():
             self._data_body_[key]["valid_time"] = valid_time
@@ -126,11 +196,19 @@ class SparrowDB(object):
             return f"{key} not found in SparrowDB"
 
     def get_all_body(self):
+        """
+        获取body的所有值
+        :return:
+        """
         for key in self._data_body_.keys():
             self._is_body_overdue_(key)
         return self._data_body_
 
     def get_all_by_key(self):
+        """
+        获取key_value的所有值
+        :return:
+        """
         for key in self._data_key_value_.keys():
             self._is_key_value_overdue_(key)
         return self._data_key_value_

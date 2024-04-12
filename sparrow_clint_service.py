@@ -1,3 +1,7 @@
+"""
+sparrowDB 服务器端
+"""
+
 import json
 from aparrowApi import SparrowApi
 from aparrowApi import ContentType
@@ -60,7 +64,8 @@ def main(data, headers):
                 body = [i for i in command_list[2].replace("%2C", ",").split(",")]
                 insert_dict = {}
                 for insert_body in body:
-                    insert_dict[insert_body.replace("%3D", "=").split("=")[0]] = insert_body.replace("%3D", "=").split("=")[1]
+                    insert_dict[insert_body.replace("%3D", "=").split("=")[0]] = \
+                    insert_body.replace("%3D", "=").split("=")[1]
                 if len(command_list) == 3:
                     result = sparrow.set_body(command_list[1], insert_dict)
                     return json.dumps({"status": "ok", "data": result})
