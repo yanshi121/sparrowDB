@@ -138,6 +138,23 @@ class SparrowDB(object):
         else:
             return f"{key} not found in SparrowDB"
 
+    def reset_body_all(self, key, body, valid_time=None):
+        """
+        重新设置body中的某个数据
+        :param key:
+        :param body:
+        :param valid_time:
+        :return:
+        """
+        self._is_body_overdue_(key)
+        if key in self._data_body_.keys():
+            self._data_body_[key]["value"] = body
+            self._data_body_[key]["valid_time"] = valid_time
+            self._data_body_[key]["set_time"] = time.time()
+            return self._data_body_[key]
+        else:
+            return f"{key} not found in SparrowDB"
+
     def get_body(self, key):
         """
         获取body中的某个值

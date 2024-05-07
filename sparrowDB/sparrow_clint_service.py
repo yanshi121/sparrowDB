@@ -82,7 +82,27 @@ class SparrowDBService(object):
                                 {"status": "bad", "data": f"{command} -> {command_list[3]} is Invalid time"})
                     else:
                         return json.dumps({"status": "bad", "data": f"{command} is Invalid command"})
+                elif command_list[0] == "reset_body_all":
+                    body = [i for i in command_list[2].replace("%2C", ",").split(",")]
+                    insert_dict = {}
+                    for insert_body in body:
+                        insert_dict[insert_body.replace("%3D", "=").split("=")[0]] = \
+                            insert_body.replace("%3D", "=").split("=")[1]
+                    if len(command_list) == 3:
+                        result = sparrow.reset_body_all(command_list[1], insert_dict)
+                        return json.dumps({"status": "ok", "data": result})
+                    elif len(command_list) == 4:
+                        try:
+                            valid_time = float(command_list[3])
+                            result = sparrow.reset_body_all(command_list[1], insert_dict, valid_time)
+                            return json.dumps({"status": "ok", "data": result})
+                        except:
+                            return json.dumps(
+                                {"status": "bad", "data": f"{command} -> {command_list[3]} is Invalid time"})
+                    else:
+                        return json.dumps({"status": "bad", "data": f"{command} is Invalid command"})
                 elif command_list[0] == "reset_body":
+                    print(command_list)
                     insert_dict = {"key": command_list[2].replace("%3D", "=").split("=")[0],
                                    "value": command_list[2].replace("%3D", "=").split("=")[1]}
                     if len(command_list) == 3:
@@ -104,7 +124,7 @@ class SparrowDBService(object):
                         return json.dumps({"status": "ok", "data": result})
                     else:
                         return json.dumps({"status": "bad", "data": f"{command} is Invalid command"})
-                elif command_list[0] == "delete":
+                elif command_list[0] == "delete_body":
                     if len(command_list) == 2:
                         result = sparrow.delete_body(command_list[1])
                         return json.dumps({"status": "ok", "data": result})
