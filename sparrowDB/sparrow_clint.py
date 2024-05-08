@@ -3,7 +3,8 @@ sparrowDB 客服端
 """
 import sys
 import requests
-from colorama import Fore, init
+from colorama import Fore
+from colorama import init
 
 
 class SparrowClint(object):
@@ -12,7 +13,7 @@ class SparrowClint(object):
         self.headers = {"SparrowApi": "SparrowApi", "Password": "", "Username": ""}
         init(autoreset=True)
 
-    def send_command(self, command):
+    def send_command(self, command: str):
         """
         发送命令
         :param command: 命令

@@ -5,7 +5,8 @@ import json
 from sparrowApi import SparrowApi
 from sparrowApi import ContentType
 from sparrowDB.sparrow import SparrowDB
-from config import *
+from sparrowDB.config import *
+from sparrowDB.tools import SparrowValidTimeError
 
 app = SparrowApi(__name__)
 sparrow = SparrowDB()
@@ -18,6 +19,11 @@ class SparrowDBService(object):
     @staticmethod
     @app.post("/", content_type=ContentType.JSON)
     def main(data, headers):
+        """
+        :param data: SparrowApi向函数注入获取的数据
+        :param headers: SparrowApi向函数注入获取的请求头
+        :return:
+        """
         if headers.get("SparrowApi"):
             if headers.get("Password") == password and headers.get("Username") == username:
                 command = data.get("command").replace("+", " ")
@@ -52,7 +58,7 @@ class SparrowDBService(object):
                             valid_time = float(command_list[3])
                             result = sparrow.reset_key_value(command_list[1], command_list[2], valid_time)
                             return json.dumps({"status": "ok", "data": result})
-                        except:
+                        except SparrowValidTimeError:
                             return json.dumps(
                                 {"status": "bad", "data": f"{command} -> {command_list[3]} is Invalid time"})
                     else:
@@ -77,7 +83,7 @@ class SparrowDBService(object):
                             valid_time = float(command_list[3])
                             result = sparrow.set_body(command_list[1], insert_dict, valid_time)
                             return json.dumps({"status": "ok", "data": result})
-                        except:
+                        except SparrowValidTimeError:
                             return json.dumps(
                                 {"status": "bad", "data": f"{command} -> {command_list[3]} is Invalid time"})
                     else:
@@ -96,7 +102,7 @@ class SparrowDBService(object):
                             valid_time = float(command_list[3])
                             result = sparrow.reset_body_all(command_list[1], insert_dict, valid_time)
                             return json.dumps({"status": "ok", "data": result})
-                        except:
+                        except SparrowValidTimeError:
                             return json.dumps(
                                 {"status": "bad", "data": f"{command} -> {command_list[3]} is Invalid time"})
                     else:
@@ -113,7 +119,7 @@ class SparrowDBService(object):
                             valid_time = float(command_list[3])
                             result = sparrow.reset_body(command_list[1], insert_dict, valid_time)
                             return json.dumps({"status": "ok", "data": result})
-                        except:
+                        except SparrowValidTimeError:
                             return json.dumps(
                                 {"status": "bad", "data": f"{command} -> {command_list[3]} is Invalid time"})
                     else:
@@ -164,13 +170,35 @@ class SparrowDBService(object):
             return json.dumps({"status": "bad", "data": "headers is not required"})
 
     @staticmethod
-    def run():
-        app.run(host=HOST, port=PORT, try_model=TRY_MODEL, show_error=SHOW_ERROR, log_file=LOG_FILE,
-                default_listen=DEFAULT_LISTEN, is_save_log=IS_SAVE_LOG)
+    def run(host: str = None, port: int = None, try_model: bool = None, show_error: bool = None, log_file: str = None, default_listen: int = None, is_save_log: bool = None):
+        """
+        :param host: 启动ip，不输入默认从config文件中读取，默认127.0.0.1
+        :param port: 启动端口，不输入默认从config文件中读取，默认712
+        :param try_model: try模式，不输入默认从config文件中读取，默认True
+        :param show_error: 显示错误信息，不输入默认从config文件中读取，默认True
+        :param log_file: 日志记录文件，不输入默认从config文件中读取，默认sparrow.log
+        :param default_listen: 监听数量，不输入默认从config文件中读取，默认1
+        :param is_save_log: 是否保存日志，不输入默认从config文件中读取，默认False
+        :return:
+        """
+        if host is None:
+            host = HOST
+        if port is None:
+            port = PORT
+        if try_model is None:
+            try_model = TRY_MODEL
+        if show_error is None:
+            show_error = SHOW_ERROR
+        if log_file is None:
+            log_file = LOG_FILE
+        if default_listen is None:
+            default_listen = DEFAULT_LISTEN
+        if is_save_log is None:
+            is_save_log = IS_SAVE_LOG
+        app.run(host=host, port=port, try_model=try_model, show_error=show_error, log_file=log_file,
+                default_listen=default_listen, is_save_log=is_save_log)
 
 
 if __name__ == "__main__":
     run = SparrowDBService()
     run.run()
-
-
